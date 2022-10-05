@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import { getAuth } from 'firebase/auth'
+import { getAuth, onAuthStateChanged } from 'firebase/auth'
 
 const routes = [
   {
@@ -52,26 +52,29 @@ const router = createRouter({
 
 const getCurrentUser = () => {
   return new Promise((resolve, reject) => {
+    const removeEventListener = onAuthStateChanged(
+      
     getAuth(),
     (user) => {
       removeEventListener(),
       resolve(user)
     },
     reject
+    )
   })
 }
 
 router.beforeEach(async (to, from, next) => {
-  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)  
-  
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)    
   if (requiresAuth) {
-   if (getCurrentUser) { 
+   if (await getCurrentUser) { 
     next();
   } 
   }
 
   else {
     next();
+    /* alert("You are not logged in"); */
   }
   
 })

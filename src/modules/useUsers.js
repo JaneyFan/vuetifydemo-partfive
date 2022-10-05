@@ -37,8 +37,11 @@ const useUsers = () => {
     }
 
     const isLoggedin = ref(false)
+
     const isLoggedinTest = () => {
         const auth = getAuth();
+
+        user.value = auth.currentUser;
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 isLoggedin.value = true;
